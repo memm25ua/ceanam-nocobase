@@ -12,10 +12,10 @@ COPY package.json yarn.lock ./
 COPY lerna.json tsconfig.json tsconfig.server.json vitest.config.mts playwright.config.ts .env.e2e.example ./
 COPY packages ./packages
 
-RUN yarn install --frozen-lockfile --production=false \
+RUN yarn install --production=false \
     && yarn cache clean \
     && mkdir -p storage/uploads storage/plugins storage/db storage/logs
 
 EXPOSE 13000
 
-CMD ["yarn", "start"]
+CMD ["sh", "-c", "yarn nocobase upgrade --skip-code-update && yarn start"]
