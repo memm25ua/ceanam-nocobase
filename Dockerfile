@@ -9,7 +9,7 @@ ENV NODE_ENV=production \
 RUN corepack enable
 
 COPY package.json yarn.lock ./
-COPY lerna.json tsconfig.json tsconfig.server.json vitest.config.mts playwright.config.ts ./
+COPY lerna.json tsconfig.json tsconfig.server.json vitest.config.mts playwright.config.ts .env.e2e.example ./
 COPY packages ./packages
 
 RUN yarn install --frozen-lockfile --production=false \

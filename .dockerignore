@@ -6,6 +6,7 @@ yarn-error.log
 lerna-debug.log
 .env
 .env.*
+!.env.e2e.example
 coverage
 docs-dist
 dist
