@@ -6,7 +6,7 @@ ENV NODE_ENV=production \
     APP_ENV=production \
     APP_PORT=13000
 
-RUN corepack enable
+RUN npm install -g yarn@1.22.22
 
 COPY package.json yarn.lock ./
 COPY lerna.json tsconfig.json tsconfig.server.json vitest.config.mts playwright.config.ts .env.e2e.example ./
