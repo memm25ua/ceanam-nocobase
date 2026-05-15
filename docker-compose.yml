@@ -16,9 +16,7 @@ services:
       retries: 10
 
   nocobase:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: nocobase/nocobase:2.1.0-beta.32
     restart: unless-stopped
     depends_on:
       postgres:
@@ -36,8 +34,7 @@ services:
       LOCAL_STORAGE_BASE_URL: /storage/uploads
       TZ: ${TZ:-Europe/Madrid}
     volumes:
-      - nocobase-storage:/app/storage
-      - nocobase-uploads:/storage/uploads
+      - nocobase-storage:/app/nocobase/storage
     expose:
       - "13000"
     healthcheck:
@@ -50,4 +47,3 @@ services:
 volumes:
   postgres-data:
   nocobase-storage:
-  nocobase-uploads:

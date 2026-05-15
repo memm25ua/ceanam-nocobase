@@ -1,13 +1,12 @@
 # Coolify Deployment
 
-This repo is a NocoBase app generated with `create-nocobase-app`.
+This repo deploys NocoBase with Docker Compose.
 
 ## Version
 
-This app is pinned to the latest published beta checked at upgrade time:
+The deployment is pinned to the official NocoBase Docker image:
 
-- `@nocobase/cli`: `2.1.0-beta.32`
-- `@nocobase/devtools`: `2.1.0-beta.32`
+- `nocobase/nocobase:2.1.0-beta.32`
 
 ## Coolify
 
@@ -24,7 +23,7 @@ Set these environment variables in Coolify:
 Expose the `nocobase` service on internal port `13000`.
 Do not publish a host port in Coolify; let Coolify/Traefik route the domain to the internal port.
 
-The container runs `yarn nocobase upgrade --skip-code-update` before `yarn start`, so database migrations are applied during deployment. Back up the database and stop the old instance before deploying a beta upgrade.
+The official image entrypoint prepares the bundled app and starts NocoBase. Back up the database and stop the old instance before deploying a beta upgrade.
 
 ## Empty Database
 
@@ -63,4 +62,4 @@ npm view @nocobase/cli@beta version
 npm view @nocobase/devtools@beta version
 ```
 
-Then set both packages in `package.json` to the same beta version, commit the change, and push to `main`. Do not install dependencies locally for this repository; Coolify resolves the pinned packages during the Docker build.
+Then update the `nocobase` service image tag in `docker-compose.yml`, test the Compose deployment locally, commit the change, and push to `main`.
