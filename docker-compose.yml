@@ -36,7 +36,6 @@ services:
       TZ: ${TZ:-Europe/Madrid}
     volumes:
       - nocobase-storage:/app/nocobase/storage
-      - ./storage-scripts:/app/nocobase/storage/scripts:ro
     expose:
       - "13000"
     healthcheck:
