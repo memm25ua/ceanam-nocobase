@@ -1,6 +1,12 @@
 -- Migration 001 — Integrity check constraints for the CRM domain model
 -- Idempotent: re-runnable safely. Each ALTER is wrapped in a DO block that
--- skips creation if the constraint already exists.
+-- skips creation if the constraint already exists or the table is not yet
+-- present (first-time bootstrap before NocoBase creates the tables).
+--
+-- Column names follow NocoBase v2 defaults for the new domain_* tables
+-- (snowflakeId PKs, camelCase FK columns for relation fields). Scalar
+-- non-relation fields stay snake_case because the schema explicitly names
+-- them that way.
 --
 -- Apply with:
 --   psql "$DATABASE_URL" -f migrations/001_check_constraints.sql
@@ -10,7 +16,7 @@
 
 -- ============================================================
 -- domain_enrollments: XOR between recurrent and one-off flavors
--- Exactly one of (recurrence_pattern_id, class_session_id) must be set.
+-- Exactly one of (recurrencePatternId, classSessionId) must be set.
 -- ============================================================
 DO $$
 BEGIN
@@ -25,14 +31,14 @@ BEGIN
   ) THEN
     ALTER TABLE domain_enrollments
       ADD CONSTRAINT enrollment_kind_xor
-      CHECK ((recurrence_pattern_id IS NULL) <> (class_session_id IS NULL));
+      CHECK (("recurrencePatternId" IS NULL) <> ("classSessionId" IS NULL));
   END IF;
 END$$;
 
 -- ============================================================
 -- domain_contracts: kind <-> required fields consistency
--- regular_mensual: requires academic_level_id + weekly_hours, service_id null.
--- other kinds: requires service_id, academic_level_id + weekly_hours null.
+-- regular_mensual: requires academicLevelId + weekly_hours, serviceId null.
+-- other kinds: requires serviceId, academicLevelId + weekly_hours null.
 -- ============================================================
 DO $$
 BEGIN
@@ -49,13 +55,13 @@ BEGIN
       ADD CONSTRAINT contract_kind_fields_consistent
       CHECK (
         (kind = 'regular_mensual'
-           AND academic_level_id IS NOT NULL
+           AND "academicLevelId" IS NOT NULL
            AND weekly_hours IS NOT NULL
-           AND service_id IS NULL)
+           AND "serviceId" IS NULL)
         OR
         (kind <> 'regular_mensual'
-           AND service_id IS NOT NULL
-           AND academic_level_id IS NULL
+           AND "serviceId" IS NOT NULL
+           AND "academicLevelId" IS NULL
            AND weekly_hours IS NULL)
       );
   END IF;
@@ -77,7 +83,7 @@ BEGIN
   ) THEN
     ALTER TABLE domain_attendances
       ADD CONSTRAINT attendance_unique_pair
-      UNIQUE (enrollment_id, class_session_id);
+      UNIQUE ("enrollmentId", "classSessionId");
   END IF;
 END$$;
 
@@ -97,6 +103,6 @@ BEGIN
   ) THEN
     ALTER TABLE domain_pricing_tariffs
       ADD CONSTRAINT tariff_unique_slot
-      UNIQUE (academic_level_id, weekly_hours, effective_from);
+      UNIQUE ("academicLevelId", weekly_hours, effective_from);
   END IF;
 END$$;
