@@ -44,6 +44,21 @@ services:
       retries: 12
       start_period: 120s
 
+  migrate:
+    image: postgres:17
+    restart: "no"
+    depends_on:
+      nocobase:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in Coolify}
+      DB_USER: ${DB_USER:-postgres}
+      DB_DATABASE: ${DB_DATABASE:-ceanam}
+      TZ: ${TZ:-Europe/Madrid}
+    volumes:
+      - ./migrations:/migrations:ro
+    entrypoint: ["sh", "/migrations/run.sh"]
+
 volumes:
   postgres-data:
   nocobase-storage:
