@@ -1,0 +1,9 @@
+FROM postgres:17
+
+# Bake the migrations directly into the image so the sidecar does not depend
+# on a host bind mount (Coolify does not always honour ./migrations the same
+# way local docker compose does).
+COPY migrations/ /migrations/
+RUN chmod +x /migrations/run.sh
+
+ENTRYPOINT ["sh", "/migrations/run.sh"]

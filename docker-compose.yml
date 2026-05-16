@@ -46,7 +46,10 @@ services:
       start_period: 120s
 
   migrate:
-    image: postgres:17
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    image: ceanam-migrate:local
     restart: "no"
     depends_on:
       nocobase:
@@ -56,9 +59,6 @@ services:
       DB_USER: ${DB_USER:-postgres}
       DB_DATABASE: ${DB_DATABASE:-ceanam}
       TZ: ${TZ:-Europe/Madrid}
-    volumes:
-      - ./migrations:/migrations:ro
-    entrypoint: ["sh", "/migrations/run.sh"]
 
 volumes:
   postgres-data:
